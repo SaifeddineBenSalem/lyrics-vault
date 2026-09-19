@@ -459,7 +459,7 @@ If this project is part of a portfolio or creative brand, you can customize this
 ![library](screenshots/library.png)
 ![songs](screenshots/songs.png)
 ![albums](screenshots/albums.png)
-![albumsreview](screenshots/albumsreview.png)
+![albumsreview](screenshots/albumreview.png)
 ![settings](screenshots/settings.png)
 ---
 
