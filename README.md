@@ -456,8 +456,11 @@ If this project is part of a portfolio or creative brand, you can customize this
 ## Screenshots
 
 ![Home Page](screenshots/homepage.png)
-
-
+![library](screenshots/library.png)
+![songs](screenshots/songs.png)
+![albums](screenshots/albums.png)
+![albumsreview](screenshots/albumsreview.png)
+![settings](screenshots/settings.png)
 ---
 
 <p align="center">
