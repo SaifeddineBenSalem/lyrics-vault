@@ -1,0 +1,30 @@
+<section class="albums-page">
+  <div class="page-header">
+    <div><p class="eyebrow">ORGANIZE</p><h1>Albums</h1><p class="muted">Build ordered releases from the songs in your local vault.</p></div>
+    <button class="primary-button" type="button" (click)="openCreate()">+ Create album</button>
+  </div>
+
+  <div class="album-editor panel" *ngIf="editorOpen">
+    <div class="editor-heading"><h2>{{ editingId ? 'Edit album' : 'Create album' }}</h2><button class="icon-button" type="button" (click)="closeEditor()">×</button></div>
+    <div class="form-grid">
+      <label>Album Name<input #albumNameInput [(ngModel)]="form.name" placeholder="Album name" /></label>
+      <label>Artist<input [(ngModel)]="form.artist" placeholder="Artist" /></label>
+      <label>Genre<select [(ngModel)]="form.genre"><option *ngFor="let genre of genreOptions" [value]="genre">{{ genre }}</option></select></label>
+      <label>Release Date<input type="date" [(ngModel)]="form.releaseDate" /></label>
+      <label>Status<select [(ngModel)]="form.status"><option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option></select></label>
+      <label>Cover Image<input type="file" accept="image/*" (change)="onCoverSelected($event)" /></label>
+      <label class="wide">Description<textarea rows="4" [(ngModel)]="form.description" placeholder="What belongs on this release?"></textarea></label>
+    </div>
+    <div class="cover-preview" *ngIf="form.coverImage"><img [src]="form.coverImage" alt="Album cover preview" /><button class="ghost-button" type="button" (click)="removeCoverImage()">Remove image</button></div>
+    <div class="editor-actions"><button class="ghost-button" type="button" (click)="closeEditor()">Cancel</button><button class="primary-button" type="button" (click)="saveAlbum()">Save album</button></div>
+  </div>
+
+  <div class="album-grid" *ngIf="albums().length; else noAlbums">
+    <article class="album-card panel" *ngFor="let album of albums()" (click)="openAlbum(album)">
+      <div class="cover-art" [class.has-cover]="album.coverImage"><img *ngIf="album.coverImage" [src]="album.coverImage" [alt]="album.name + ' cover'" /><span *ngIf="!album.coverImage">{{ album.name.slice(0, 1).toUpperCase() }}</span></div>
+      <div class="album-card-content"><div class="card-heading"><div><h2>{{ album.name }}</h2><p>{{ album.artist }}</p></div><span class="status" [class]="statusClass(album.status)">{{ album.status }}</span></div><div class="meta-row"><span>{{ album.songIds.length }} tracks</span><span>{{ album.genre }}</span><span>{{ album.releaseDate || 'Release date TBD' }}</span></div><div class="card-actions"><button class="action-button action-secondary" type="button" (click)="openEdit(album, $event)">Edit</button><button class="action-button action-danger" type="button" (click)="deleteAlbum(album, $event)">Delete</button></div></div>
+    </article>
+  </div>
+
+  <ng-template #noAlbums><div class="empty-state panel"><p class="eyebrow">NO RELEASES YET</p><h2>Create your first album.</h2><p class="muted">Albums keep track order, metadata, and cover art together.</p><button class="primary-button" type="button" (click)="openCreate()">Create album</button></div></ng-template>
+</section>

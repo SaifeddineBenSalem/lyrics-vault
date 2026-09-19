@@ -1,0 +1,50 @@
+<section class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">BPM LAB</p>
+      <h1>Tempo and pulse</h1>
+    </div>
+  </div>
+
+  <div class="panel bpm-panel">
+    <div class="bpm-display">
+      <strong>{{ bpm() }}</strong>
+      <span>BPM</span>
+    </div>
+
+    <div class="controls">
+      <button type="button" (click)="decrease()">−</button>
+      <button type="button" (click)="increase()">＋</button>
+      <button type="button" class="accent" (click)="tapTempo()">Tap</button>
+      <button type="button" (click)="resetTaps()">Reset</button>
+      <button type="button" (click)="toggleMetronome()">{{ isPlaying ? 'Stop' : 'Start' }}</button>
+    </div>
+
+    <div class="meta-grid">
+      <label>
+        BPM
+        <input type="number" [ngModel]="bpm()" (ngModelChange)="setBpm($event)" min="40" max="220" />
+      </label>
+      <label>
+        Beats / bar
+        <input type="number" [(ngModel)]="beatsPerMeasure" min="1" max="12" />
+      </label>
+      <label>
+        Volume
+        <input type="range" min="0" max="1" step="0.05" [(ngModel)]="volume" />
+      </label>
+      <label class="checkbox-row">
+        <input type="checkbox" [(ngModel)]="accentFirstBeat" />
+        Accent first beat
+      </label>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Tap history</h3>
+    <div class="tap-list">
+      <span *ngFor="let tap of tapInfo()">{{ tap }}</span>
+    </div>
+    <p>Average: {{ average() }} BPM</p>
+  </div>
+</section>

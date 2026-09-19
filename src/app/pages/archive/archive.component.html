@@ -1,0 +1,36 @@
+<section class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">ARCHIVE</p>
+      <h1>Vault archive</h1>
+    </div>
+  </div>
+
+  <div class="archive-grid" *ngIf="archivedSongs().length; else emptyState">
+    <article class="song-card" *ngFor="let song of archivedSongs()">
+      <div class="card-top">
+        <div>
+          <p class="status-badge">Archived</p>
+          <h2>{{ song.title }}</h2>
+        </div>
+      </div>
+      <div class="meta-row">
+        <span>{{ song.genre }}</span>
+        <span>{{ song.bpm }} BPM</span>
+        <span>{{ song.key }}</span>
+      </div>
+      <small>Archived/updated {{ song.updatedAt | date: 'MMM d, y' }}</small>
+      <div class="card-actions">
+        <button class="action-button action-primary" type="button" (click)="openSong(song.id)">Open</button>
+        <button class="action-button action-success" type="button" (click)="restoreSong(song.id)">Restore</button>
+        <button class="action-button action-danger" type="button" (click)="deletePermanently(song.id, song.title)">Delete Permanently</button>
+      </div>
+    </article>
+  </div>
+
+  <ng-template #emptyState>
+    <div class="panel empty-state">
+      <p>No archived songs yet.</p>
+    </div>
+  </ng-template>
+</section>

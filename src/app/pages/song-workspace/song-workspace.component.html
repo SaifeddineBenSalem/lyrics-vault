@@ -1,0 +1,288 @@
+<section class="workspace" *ngIf="selectedSong() as song">
+  <header class="workspace-header" [class.focus-mode]="focusMode()">
+    <div class="workspace-topline">
+      <button class="ghost-button" type="button" (click)="goBack()">← Back</button>
+      <div class="song-title-block">
+        <input [(ngModel)]="song.title" (ngModelChange)="updateSong({ title: song.title })" />
+        <button class="icon-button" type="button" (click)="toggleFavorite()">{{ song.favorite ? '★' : '☆' }}</button>
+      </div>
+      <div class="header-meta">
+        <span>STATUS {{ song.status }}</span>
+        <span>BPM {{ song.bpm }}</span>
+        <span>KEY {{ song.key }}</span>
+        <span>GENRE {{ song.genre }}</span>
+      </div>
+    </div>
+
+    <nav class="workspace-tabs">
+      <button type="button" [class.active]="activeTab() === 'lyrics'" (click)="activeTab.set('lyrics')">Lyrics</button>
+      <button type="button" [class.active]="activeTab() === 'structure'" (click)="activeTab.set('structure')">Structure</button>
+      <button type="button" [class.active]="activeTab() === 'rhyme'" (click)="activeTab.set('rhyme')">Rhyme</button>
+      <button type="button" [class.active]="activeTab() === 'versions'" (click)="activeTab.set('versions')">Versions</button>
+      <button type="button" [class.active]="activeTab() === 'details'" (click)="activeTab.set('details')">Details</button>
+      <button type="button" [class.active]="activeTab() === 'notes'" (click)="activeTab.set('notes')">Notes</button>
+      <button type="button" [class.active]="activeTab() === 'audio'" (click)="activeTab.set('audio')">Audio</button>
+      <button type="button" [class.active]="activeTab() === 'stats'" (click)="activeTab.set('stats')">Stats</button>
+    </nav>
+  </header>
+
+  <div class="save-indicator" [attr.data-state]="saveState()">{{ saveState() === 'saving' ? 'Saving...' : saveState() === 'saved' ? 'Saved' : 'Error saving' }}</div>
+
+  <div class="workspace-body" *ngIf="activeTab() === 'lyrics'">
+    <div class="stats-line">
+      <span>Words {{ lyricStats().words }}</span>
+      <span>Characters {{ lyricStats().characters }}</span>
+      <span>Lines {{ lyricStats().lines }}</span>
+      <span>Avg words/line {{ lyricStats().avgWords }}</span>
+      <span>Sections {{ lyricStats().sections }}</span>
+    </div>
+
+    <div class="lyrics-layout">
+      <div class="sections-list" cdkDropList (cdkDropListDropped)="drop($event)">
+        <div class="section-card" *ngFor="let section of song.sections; let index = index" cdkDrag>
+          <div class="section-header">
+            <select [(ngModel)]="section.type" (ngModelChange)="updateSection(section.id, { type: section.type })">
+              <option *ngFor="let option of ['intro','verse','pre-hook','hook','bridge','breakdown','outro','interlude','custom']" [value]="option">{{ option }}</option>
+            </select>
+            <input [(ngModel)]="section.name" (ngModelChange)="updateSection(section.id, { name: section.name })" />
+            <button class="section-action section-action-duplicate" type="button" (click)="duplicateSection(section.id)"><span aria-hidden="true">⧉</span> Duplicate</button>
+            <button class="section-action section-action-delete" type="button" (click)="deleteSection(section.id)"><span aria-hidden="true">⌫</span> Delete</button>
+          </div>
+          <textarea [(ngModel)]="section.content" (ngModelChange)="updateSection(section.id, { content: section.content })" rows="8"></textarea>
+        </div>
+        <button class="primary-button" type="button" (click)="addSection()">+ Add section</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="workspace-body" *ngIf="activeTab() === 'structure'">
+    <div class="panel">
+      <h3>Structure board</h3>
+      <div class="structure-row" cdkDropList (cdkDropListDropped)="drop($event)">
+        <div class="structure-card" *ngFor="let section of song.sections" cdkDrag>
+          {{ section.name.toUpperCase() }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="workspace-body" *ngIf="activeTab() === 'rhyme'">
+    <div class="panel" *ngIf="rhymeAnalysis() as result">
+      <h3>Rhyme analysis</h3>
+      <p>Scheme: {{ result.rhymeScheme || 'N/A' }}</p>
+      <p>Density: {{ result.rhymeDensity }}%</p>
+      <div class="rhyme-groups">
+        <span *ngFor="let group of result.rhymeGroups">{{ group.join(', ') }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="workspace-body" *ngIf="activeTab() === 'versions'">
+    <div class="version-create">
+      <div>
+        <p class="eyebrow">VERSION HISTORY</p>
+        <h3>Save a snapshot</h3>
+      </div>
+      <input [(ngModel)]="versionName" placeholder="Version name, e.g. Final" />
+      <input [(ngModel)]="versionDescription" placeholder="Description, e.g. Changed hook" />
+      <button class="primary-button" type="button" (click)="saveVersion()">Save version</button>
+    </div>
+
+    <div class="compare-controls" *ngIf="versions().length > 1">
+      <span>Compare</span>
+      <select [ngModel]="compareFirstId()" (ngModelChange)="compareFirstId.set($event)">
+        <option value="">Select version</option>
+        <option *ngFor="let version of versions()" [value]="version.id">{{ version.name }}</option>
+      </select>
+      <span>with</span>
+      <select [ngModel]="compareSecondId()" (ngModelChange)="compareSecondId.set($event)">
+        <option value="">Select version</option>
+        <option *ngFor="let version of versions()" [value]="version.id">{{ version.name }}</option>
+      </select>
+      <button class="ghost-button" type="button" (click)="compareVersions()">Compare</button>
+    </div>
+
+    <div class="version-list" *ngIf="versions().length; else noVersions">
+      <article class="version-card" *ngFor="let version of versions()">
+        <div class="version-card-main">
+          <div class="version-heading"><strong>{{ version.name }}</strong><span>{{ version.parentVersionId ? 'Child version' : 'Root version' }}</span></div>
+          <p>{{ version.description || 'No description' }}</p>
+          <small>Created {{ formatVersionTime(version.createdAt) }}</small>
+          <small>Parent: {{ getParentVersionName(version) }}</small>
+        </div>
+        <div class="version-actions">
+          <button type="button" (click)="viewVersion(version)">View</button>
+          <button type="button" (click)="compareFirstId.set(version.id)">Compare</button>
+          <button type="button" (click)="restoreVersion(version)">Restore</button>
+          <button type="button" (click)="renameVersion(version)">Rename</button>
+          <button class="section-action section-action-delete" type="button" (click)="deleteVersion(version)"><span aria-hidden="true">⌫</span> Delete</button>
+        </div>
+      </article>
+    </div>
+    <ng-template #noVersions><div class="empty-version-state"><h3>No versions yet.</h3><p>Save your first version to create a snapshot.</p></div></ng-template>
+
+    <div class="compare-result" *ngIf="comparedVersions() as comparison">
+      <div class="version-heading"><h3>{{ comparison.first.name }} vs {{ comparison.second.name }}</h3><span>{{ getChangedSectionCount() }} changed sections</span></div>
+      <div class="diff-row" *ngFor="let row of comparison.rows" [class.changed]="row.changed">
+        <span>{{ row.index + 1 }}</span>
+        <div><strong>{{ getComparedSectionName(row.first, 'Only in ' + comparison.second.name) }}</strong><p>{{ getComparedSectionContent(row.first) }}</p></div>
+        <div><strong>{{ getComparedSectionName(row.second, 'Only in ' + comparison.first.name) }}</strong><p>{{ getComparedSectionContent(row.second) }}</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="version-viewer-backdrop" *ngIf="viewedVersion() as version" (click)="closeVersionViewer()">
+    <article class="version-viewer" (click)="$event.stopPropagation()">
+      <div class="viewer-header"><div><p class="eyebrow">READ-ONLY VERSION</p><h2>{{ version.name }}</h2><p>{{ version.description }}</p></div><button class="icon-button" type="button" (click)="closeVersionViewer()">×</button></div>
+      <p class="viewer-date">Created {{ formatVersionTime(version.createdAt) }}</p>
+      <div class="viewer-metadata"><span>BPM {{ version.metadata.bpm }}</span><span>Key {{ version.metadata.key }}</span><span>Genre {{ version.metadata.genre }}</span><span>Status {{ version.metadata.status }}</span></div>
+      <div class="viewer-sections"><section *ngFor="let section of version.sections"><h3>{{ section.name }}</h3><p>{{ section.content || '...' }}</p></section></div>
+    </article>
+  </div>
+
+  <div class="workspace-body" *ngIf="activeTab() === 'details'">
+    <div class="details-grid">
+      <div class="form-section">
+        <h3>Basic Information</h3>
+        <label>
+          Title
+          <input type="text" [(ngModel)]="song.title" (ngModelChange)="updateSong({ title: song.title })" />
+        </label>
+        <label>
+          Artist
+          <input type="text" [(ngModel)]="song.artist" (ngModelChange)="updateSong({ artist: song.artist })" />
+        </label>
+      </div>
+
+      <div class="form-section">
+        <h3>Music</h3>
+        <label>
+          BPM
+          <div class="bpm-stepper">
+            <button type="button" (click)="changeBpm(song, -1)">-</button>
+            <input type="number" min="20" max="300" [(ngModel)]="song.bpm" (ngModelChange)="updateSong({ bpm: +song.bpm })" />
+            <button type="button" (click)="changeBpm(song, 1)">+</button>
+          </div>
+        </label>
+        <label>
+          Key
+          <select [(ngModel)]="song.key" (ngModelChange)="updateSong({ key: song.key })">
+            <option *ngFor="let item of keyOptions" [value]="item">{{ item }}</option>
+          </select>
+        </label>
+        <label>
+          Time Signature
+          <select [(ngModel)]="song.timeSignature" (ngModelChange)="updateSong({ timeSignature: song.timeSignature })">
+            <option *ngFor="let item of timeSignatureOptions" [value]="item">{{ item }}</option>
+          </select>
+        </label>
+        <label>
+          Language
+          <select [(ngModel)]="song.language" (ngModelChange)="updateSong({ language: song.language })">
+            <option *ngFor="let item of languageOptions" [value]="item">{{ item }}</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-section">
+        <h3>Classification</h3>
+        <label>
+          Genre
+
+      <div class="form-section full-width instrumental-section">
+        <h3>Instrumental</h3>
+        <label>
+          External Link
+          <div class="instrumental-url-row">
+            <input type="url" [(ngModel)]="instrumentalUrlDraft" placeholder="https://example.com/instrumental" />
+            <button class="action-button action-primary" type="button" (click)="saveInstrumentalUrl()">Save link</button>
+          </div>
+        </label>
+        <div class="instrumental-actions">
+          <button class="action-button action-secondary" type="button" *ngIf="song.instrumentalUrl" (click)="openInstrumental()">Open Instrumental</button>
+          <button class="action-button action-neutral" type="button" *ngIf="song.instrumentalUrl" (click)="clearInstrumentalUrl()">Clear link</button>
+        </div>
+        <p class="instrumental-type">Local Audio</p>
+        <input type="file" accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac,audio/*,.mp3,.wav,.ogg,.m4a,.aac" (change)="uploadInstrumental($event)" />
+        <div class="instrumental-player" *ngIf="instrumentalAudio() as audio">
+          <audio controls [src]="instrumentalAudioUrl()"></audio>
+          <span>{{ audio.name }}</span>
+          <button class="action-button action-neutral" type="button" (click)="removeInstrumentalAudio()">Remove audio</button>
+        </div>
+      </div>
+          <select [(ngModel)]="song.genre" (ngModelChange)="updateSong({ genre: song.genre })">
+            <option *ngFor="let item of genreOptions" [value]="item">{{ item }}</option>
+          </select>
+        </label>
+        <label>
+          Subgenre
+          <input type="text" [(ngModel)]="song.subGenre" (ngModelChange)="updateSong({ subGenre: song.subGenre })" placeholder="Dark Trap" />
+        </label>
+        <label>
+          Status
+          <select [(ngModel)]="song.status" (ngModelChange)="updateSong({ status: song.status })">
+            <option *ngFor="let status of statusOptions" [value]="status">{{ statusLabels[status] }}</option>
+          </select>
+        </label>
+        <label>
+          Album
+          <select [ngModel]="song.albumId" (ngModelChange)="setAlbum(song, $event)">
+            <option [ngValue]="null">None</option>
+            <option *ngFor="let album of albums()" [ngValue]="album.id">{{ album.name }}</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-section">
+        <h3>Mood</h3>
+        <div class="mood-list">
+          <button type="button" *ngFor="let mood of moodOptions" [class.selected]="song.mood.includes(mood)" (click)="toggleMood(song, mood)">
+            {{ mood }}
+          </button>
+        </div>
+      </div>
+
+      <div class="form-section full-width">
+        <h3>Tags</h3>
+        <div class="tag-editor">
+          <input type="text" [(ngModel)]="tagInput" placeholder="Add tag" (keydown.enter)="addTag(song); $event.preventDefault()" />
+          <button type="button" (click)="addTag(song)">Add</button>
+        </div>
+        <div class="tag-list">
+          <span *ngFor="let tag of song.tags">
+            {{ tag }}
+            <button type="button" (click)="removeTag(song, tag)">×</button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="workspace-body" *ngIf="activeTab() === 'notes'">
+    <textarea [(ngModel)]="song.notes" (ngModelChange)="updateSong({ notes: song.notes })" rows="10"></textarea>
+  </div>
+
+  <div class="workspace-body" *ngIf="activeTab() === 'audio'">
+    <div class="panel">
+      <h3>Audio</h3>
+      <p class="muted">Instrumental links and local audio are managed in the Details tab.</p>
+      <button class="action-button action-primary" type="button" (click)="activeTab.set('details')">Open Instrumental</button>
+    </div>
+  </div>
+
+  <div class="workspace-body" *ngIf="activeTab() === 'stats'">
+    <div class="panel">
+      <h3>Song DNA</h3>
+      <div class="stats-grid">
+        <span>BPM {{ song.bpm }}</span>
+        <span>Key {{ song.key }}</span>
+        <span>Genre {{ song.genre }}</span>
+        <span>Subgenre {{ song.subGenre }}</span>
+        <span>Mood {{ song.mood }}</span>
+        <span>Sections {{ song.sections.length }}</span>
+        <span>Words {{ lyricStats().words }}</span>
+        <span>Lines {{ lyricStats().lines }}</span>
+      </div>
+    </div>
+  </div>
+</section>

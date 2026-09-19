@@ -1,0 +1,174 @@
+<section class="songs-page">
+  <div class="toolbar">
+    <div>
+      <p class="eyebrow">LIBRARY</p>
+      <h1>All songs</h1>
+    </div>
+    <button class="primary-button" type="button" (click)="createSong()">+ New Song</button>
+  </div>
+
+  <div class="filters-card">
+    <input type="search" [ngModel]="query()" (ngModelChange)="setQuery($event)" placeholder="Search songs" />
+
+    <select [(ngModel)]="sortMode">
+      <option value="updated">Recently updated</option>
+      <option value="created">Created date</option>
+      <option value="alphabetical">Alphabetical</option>
+      <option value="bpm">BPM</option>
+    </select>
+
+    <div class="view-toggle">
+      <button type="button" [class.active]="viewMode === 'grid'" (click)="viewMode = 'grid'">Grid</button>
+      <button type="button" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">List</button>
+    </div>
+  </div>
+
+  <div class="quick-create" *ngIf="!songs().length">
+    <div class="form-section">
+      <h3>Basic Information</h3>
+      <label>
+        Title
+        <input type="text" [(ngModel)]="newSong.title" placeholder="Song title" required />
+      </label>
+      <label>
+        Artist
+        <input type="text" [(ngModel)]="newSong.artist" placeholder="Artist" />
+      </label>
+    </div>
+
+    <div class="form-section">
+      <h3>Music</h3>
+      <label>
+        BPM
+        <div class="bpm-stepper">
+          <button type="button" (click)="changeBpm(-1)">-</button>
+          <input type="number" min="20" max="300" [(ngModel)]="newSong.bpm" />
+          <button type="button" (click)="changeBpm(1)">+</button>
+        </div>
+      </label>
+      <label>
+        Key
+        <select [(ngModel)]="newSong.key">
+          <option *ngFor="let key of keyOptions" [value]="key">{{ key }}</option>
+        </select>
+      </label>
+      <label>
+        Time Signature
+        <select [(ngModel)]="newSong.timeSignature">
+          <option *ngFor="let item of timeSignatureOptions" [value]="item">{{ item }}</option>
+        </select>
+      </label>
+      <label>
+        Language
+        <select [(ngModel)]="newSong.language">
+          <option *ngFor="let item of languageOptions" [value]="item">{{ item }}</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="form-section">
+      <h3>Classification</h3>
+      <label>
+        Genre
+        <select [(ngModel)]="newSong.genre">
+          <option *ngFor="let item of genreOptions" [value]="item">{{ item }}</option>
+        </select>
+      </label>
+      <label>
+        Subgenre
+        <input type="text" [(ngModel)]="newSong.subGenre" placeholder="Dark Trap" />
+      </label>
+      <label>
+        Status
+        <select [(ngModel)]="newSong.status">
+          <option value="idea">Idea</option>
+          <option value="writing">Writing</option>
+          <option value="demo">Demo</option>
+          <option value="recording">Recording</option>
+          <option value="mixing">Mixing</option>
+          <option value="mastering">Mastering</option>
+          <option value="ready">Ready</option>
+          <option value="released">Released</option>
+        </select>
+      </label>
+      <label>
+        Album
+        <select [(ngModel)]="newSong.albumId">
+          <option [ngValue]="null">None</option>
+          <option *ngFor="let album of albums()" [ngValue]="album.id">{{ album.name }}</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="form-section">
+      <h3>Mood</h3>
+      <div class="mood-list">
+        <button type="button" *ngFor="let mood of moodOptions" [class.selected]="newSong.mood.includes(mood)" (click)="toggleMood(mood)">
+          {{ mood }}
+        </button>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Tags</h3>
+      <div class="tag-editor">
+        <input type="text" [(ngModel)]="tagInput" placeholder="Add tag" (keydown.enter)="addTag(); $event.preventDefault()" />
+        <button type="button" (click)="addTag()">Add</button>
+      </div>
+      <div class="tag-list">
+        <span *ngFor="let tag of newSong.tags">
+          {{ tag }}
+          <button type="button" (click)="removeTag(tag)">×</button>
+        </span>
+      </div>
+    </div>
+
+    <div class="form-section full-width">
+      <h3>Notes</h3>
+      <textarea [(ngModel)]="newSong.notes" rows="4" placeholder="Add notes"></textarea>
+    </div>
+
+    <button class="primary-button full-width" type="button" (click)="createSongFromQuickForm()">Save Song</button>
+  </div>
+
+  <div class="song-grid" [class.list-view]="viewMode === 'list'" *ngIf="filteredList.length; else noSongs">
+    <article class="song-card" *ngFor="let song of filteredList" (click)="openSong(song)">
+      <div class="card-top">
+        <div>
+          <p class="status-badge">{{ song.status }}</p>
+          <h2>{{ song.title }}</h2>
+        </div>
+        <span class="favorite" *ngIf="song.favorite">★</span>
+      </div>
+
+      <p class="artist">{{ song.artist }}</p>
+      <div class="meta-row">
+        <span>{{ song.genre }}</span>
+        <span>{{ song.bpm }} BPM</span>
+        <span>{{ song.key }}</span>
+      </div>
+      <div class="tag-list">
+        <span *ngFor="let tag of song.tags.slice(0, 3)">{{ tag }}</span>
+      </div>
+      <div class="card-footer">
+        <small>{{ song.updatedAt | date: 'MMM d, y' }}</small>
+        <div class="card-actions" (click)="$event.stopPropagation()">
+          <button class="action-button action-primary" type="button" (click)="openSong(song)">Open</button>
+          <button class="action-button action-secondary" type="button" (click)="openSong(song)">Edit</button>
+          <button class="action-button action-neutral" type="button" (click)="toggleFavorite(song, $event)">{{ song.favorite ? 'Unfavorite' : 'Favorite' }}</button>
+          <button class="action-button action-warning" type="button" (click)="archiveSong(song, $event)">Archive</button>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <ng-template #noSongs>
+    <div class="empty-state-card">
+      <div>
+        <p class="eyebrow">YOUR VAULT IS EMPTY</p>
+        <h2>Start your first song.</h2>
+        <button class="primary-button" type="button" (click)="createSong()">+ Create Song</button>
+      </div>
+    </div>
+  </ng-template>
+</section>

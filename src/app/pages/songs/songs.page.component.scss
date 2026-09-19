@@ -1,0 +1,267 @@
+.songs-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar h1 {
+  margin: 0.2rem 0 0;
+}
+
+.filters-card {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  padding: 1rem;
+}
+
+.filters-card input,
+.filters-card select {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-primary);
+  padding: 0.7rem 0.9rem;
+}
+
+.view-toggle {
+  display: inline-flex;
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.view-toggle button {
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 0.7rem 0.9rem;
+}
+
+.view-toggle button.active {
+  background: var(--accent-soft);
+}
+
+.song-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.song-grid.list-view {
+  grid-template-columns: 1fr;
+}
+
+.song-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  min-height: 220px;
+  padding: 1rem;
+  border-radius: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.song-card h2 {
+  margin: 0.3rem 0 0;
+  font-size: 1.2rem;
+}
+
+.status-badge {
+  display: inline-flex;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.artist {
+  margin: 0;
+  opacity: 0.8;
+}
+
+.meta-row,
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.meta-row span,
+.tag-list span {
+  padding: 0.33rem 0.55rem;
+  border-radius: 999px;
+  background: var(--bg-muted);
+  font-size: 0.75rem;
+}
+
+.card-footer {
+  margin-top: auto;
+  opacity: 0.8;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.65rem;
+}
+
+.primary-button {
+  border: 0;
+  border-radius: 12px;
+  padding: 0.8rem 1.05rem;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.favorite {
+  color: #facc15;
+}
+
+.quick-create {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  padding: 1rem;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--bg-secondary);
+}
+
+.form-section h3 {
+  margin: 0;
+}
+
+.quick-create label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.quick-create input, .quick-create select, .quick-create textarea {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.7rem 0.8rem;
+  border-radius: 10px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.bpm-stepper {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.bpm-stepper button {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.bpm-stepper input {
+  width: 100%;
+}
+
+.mood-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.mood-list button {
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: 999px;
+  padding: 0.45rem 0.7rem;
+}
+
+.mood-list button.selected {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: rgba(139, 92, 246, 0.35);
+}
+
+.tag-editor {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tag-editor button {
+  border: 0;
+  border-radius: 10px;
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  padding: 0.6rem 0.8rem;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.tag-list span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 0.35rem 0.6rem;
+}
+
+.tag-list button {
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 0;
+}
+
+@media (max-width: 720px) {
+  .card-actions .action-button {
+    flex: 1 1 auto;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

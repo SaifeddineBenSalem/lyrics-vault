@@ -1,0 +1,37 @@
+<section class="page-shell">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">RHYME LAB</p>
+      <h1>Local rhyme analysis</h1>
+    </div>
+  </div>
+
+  <div class="panel">
+    <textarea [(ngModel)]="text" rows="10" (ngModelChange)="analyze()"></textarea>
+  </div>
+
+  <div class="results-grid" *ngIf="analysis() as result">
+    <div class="panel">
+      <h3>Rhyme scheme</h3>
+      <p class="scheme">{{ result.rhymeScheme || 'N/A' }}</p>
+    </div>
+    <div class="panel">
+      <h3>Rhyme density</h3>
+      <p>{{ result.rhymeDensity }}%</p>
+    </div>
+    <div class="panel wide">
+      <h3>Rhyme groups</h3>
+      <div class="group-list">
+        <span *ngFor="let group of result.rhymeGroups">{{ group.join(' • ') }}</span>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Unique endings</h3>
+      <p>{{ result.uniqueEndings.join(', ') || '—' }}</p>
+    </div>
+    <div class="panel">
+      <h3>Internal rhymes</h3>
+      <p>{{ result.internalRhymes.join(', ') || '—' }}</p>
+    </div>
+  </div>
+</section>

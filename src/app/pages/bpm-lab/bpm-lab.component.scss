@@ -1,0 +1,89 @@
+.page-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.page-header h1 {
+  margin: 0.2rem 0 0;
+}
+
+.panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  padding: 1rem;
+}
+
+.bpm-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.bpm-display {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+}
+
+.bpm-display strong {
+  font-size: clamp(2.3rem, 6vw, 4rem);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.controls button {
+  border: 0;
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.controls .accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.meta-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.meta-grid input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-primary);
+  padding: 0.7rem 0.8rem;
+}
+
+.checkbox-row {
+  flex-direction: row !important;
+  align-items: center;
+}
+
+.tap-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+}
+
+.tap-list span {
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(34,211,238,0.12);
+}

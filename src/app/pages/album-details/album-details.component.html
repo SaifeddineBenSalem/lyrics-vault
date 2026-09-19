@@ -1,0 +1,25 @@
+<section class="album-details" *ngIf="album() as current; else missing">
+  <a class="back-link" routerLink="/albums">← Albums</a>
+  <header class="hero panel"><div class="cover-art" [class.has-cover]="current.coverImage"><img *ngIf="current.coverImage" [src]="current.coverImage" [alt]="current.name + ' cover'" /><span *ngIf="!current.coverImage">{{ current.name.slice(0, 1).toUpperCase() }}</span></div><div class="hero-copy"><p class="eyebrow">ALBUM</p><h1>{{ current.name }}</h1><h2>{{ current.artist }}</h2><div class="meta-row"><span>{{ current.genre }}</span><span>{{ current.status }}</span><span>{{ current.releaseDate || 'Release date TBD' }}</span></div><p class="description">{{ current.description || 'No description yet.' }}</p><div class="hero-actions"><button class="action-button action-secondary" type="button" (click)="openEdit(current)">Edit Album</button></div></div></header>
+
+  <section class="dna panel"><p class="eyebrow">ALBUM DNA</p><div class="stat-grid"><div><strong>{{ tracks().length }}</strong><span>Tracks</span></div><div><strong>{{ averageBpm() || '—' }}</strong><span>Average BPM</span></div><div><strong>{{ genres() }}</strong><span>Genres</span></div><div><strong>{{ current.status }}</strong><span>Status</span></div><div *ngIf="totalDuration()"><strong>{{ totalDuration() | number: '1.0-0' }}s</strong><span>Total duration</span></div></div></section>
+
+  <section class="track-panel panel"><div class="section-heading"><div><p class="eyebrow">TRACKLIST</p><h2>{{ tracks().length }} tracks</h2></div><div class="section-actions"><small>Drag to reorder</small><button class="action-button action-success" type="button" (click)="openAddTracks()">+ Add Tracks</button></div></div><div class="tracklist" cdkDropList (cdkDropListDropped)="drop($event)"><article class="track" *ngFor="let song of tracks(); let index = index" cdkDrag><span class="track-number">{{ (index + 1).toString().padStart(2, '0') }}</span><div class="track-title"><a [routerLink]="['/songs', song.id]" [state]="{ albumId: current.id }" (click)="$event.stopPropagation()">{{ song.title }}</a><small>{{ song.artist }}</small></div><span>{{ song.genre }}</span><span>{{ song.bpm }} BPM</span><span class="track-status">{{ song.status }}</span><div class="track-actions"><button class="action-button action-primary" type="button" [routerLink]="['/songs', song.id]" [state]="{ albumId: current.id }">Open</button><button class="action-button action-danger" type="button" (click)="removeSong(song)">Remove</button></div></article></div><div class="empty-tracklist" *ngIf="!tracks().length"><p>No tracks in this album yet.</p><button class="action-button action-success" type="button" (click)="openAddTracks()">+ Add Tracks</button></div></section>
+
+  <div class="add-tracks-backdrop" *ngIf="addTracksOpen()" (click)="closeAddTracks()">
+    <section class="add-tracks-dialog panel" (click)="$event.stopPropagation()">
+      <div class="section-heading"><div><p class="eyebrow">ALBUM TRACKS</p><h2>Add Tracks</h2></div><button class="action-button action-neutral" type="button" (click)="closeAddTracks()">×</button></div>
+      <div class="candidate-list" *ngIf="trackCandidates().length; else noAvailableSongs">
+        <label class="candidate" *ngFor="let candidate of trackCandidates()" [class.assigned]="candidate.assignedAlbum" [class.in-album]="candidate.isInThisAlbum">
+          <input type="checkbox" [checked]="selectedTrackIds().includes(candidate.song.id)" [disabled]="candidate.isInThisAlbum || !!candidate.assignedAlbum" (change)="toggleTrackSelection(candidate.song.id)" />
+          <span class="candidate-info"><strong>{{ candidate.song.title }}</strong><small>{{ candidate.song.artist }} · {{ candidate.song.genre }} · {{ candidate.song.bpm }} BPM · {{ candidate.song.status }}</small></span>
+          <span class="candidate-state" *ngIf="candidate.isInThisAlbum">Already in this album</span>
+          <span class="candidate-state" *ngIf="candidate.assignedAlbum">Already in {{ candidate.assignedAlbum.name }}</span>
+        </label>
+      </div>
+      <ng-template #noAvailableSongs><p class="empty-tracklist">No songs are available to add.</p></ng-template>
+      <div class="dialog-actions"><button class="action-button action-neutral" type="button" (click)="closeAddTracks()">Cancel</button><button class="action-button action-success" type="button" [disabled]="!selectedTrackIds().length" (click)="addSelectedTracks()">Add selected tracks</button></div>
+    </section>
+  </div>
+</section>
+<ng-template #missing><section class="panel empty-state"><h1>Album not found</h1><a routerLink="/albums">Back to albums</a></section></ng-template>

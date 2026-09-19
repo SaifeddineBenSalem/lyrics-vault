@@ -1,0 +1,79 @@
+<section class="dashboard-page">
+  <div class="hero-card">
+    <div>
+      <p class="eyebrow">GOOD EVENING</p>
+      <h1>Your creative vault</h1>
+      <h5>If you spot any bug please report it at : saifeddinebensalem2&#64;gmail.com</h5>
+    </div>
+    <div class="hero-metrics">
+      <div class="metric">
+        <strong>{{ stats().total }}</strong>
+        <span>songs</span>
+      </div>
+      <div class="metric">
+        <strong>{{ stats().drafts }}</strong>
+        <span>drafts</span>
+      </div>
+      <div class="metric">
+        <strong>{{ stats().released }}</strong>
+        <span>released</span>
+      </div>
+      <div class="metric">
+        <strong>{{ stats().archived }}</strong>
+        <span>archived</span>
+      </div>
+      <div class="metric">
+        <strong>{{ stats().active }}</strong>
+        <span>active</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <div class="panel large">
+      <div class="panel-header">
+        <h2>Recent songs</h2>
+      </div>
+
+      <div *ngIf="recentSongs().length; else emptyState" class="song-list">
+        <div class="song-row" *ngFor="let song of recentSongs()">
+          <div>
+            <strong>{{ song.title }}</strong>
+            <p>{{ song.artist }}</p>
+          </div>
+          <span>{{ song.genre }}</span>
+        </div>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty-state-card">
+          <div>
+            <p class="eyebrow">YOUR VAULT IS EMPTY</p>
+            <h2>Start your first song.</h2>
+            <button class="primary-button" type="button" routerLink="/songs">+ Create Song</button>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2>Quick actions</h2>
+      </div>
+      <div class="quick-actions">
+        <a routerLink="/songs">Open songs</a>
+        <a routerLink="/rhyme-lab">Rhyme Lab</a>
+        <a routerLink="/bpm-lab">BPM Lab</a>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2>Recent activity</h2>
+      </div>
+      <ul class="activity-list">
+        <li>No activity yet</li>
+      </ul>
+    </div>
+  </div>
+</section>

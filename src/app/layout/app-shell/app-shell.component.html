@@ -1,0 +1,62 @@
+<div class="app-shell" [attr.data-theme]="resolvedTheme()">
+  <aside class="sidebar">
+    <div class="brand-block">
+      <div class="brand-mark">LV</div>
+      <div>
+        <p class="eyebrow">LOCAL VAULT</p>
+        <h1>LYRIC VAULT</h1>
+      </div>
+    </div>
+
+    <nav class="nav-group">
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/songs" routerLinkActive="active">Library</a>
+      <a routerLink="/rhyme-lab" routerLinkActive="active">Rhyme Lab</a>
+      <a routerLink="/bpm-lab" routerLinkActive="active">BPM Lab</a>
+      <p class="nav-label">Organize</p>
+      <a routerLink="/albums" routerLinkActive="active">Albums</a>
+      <a routerLink="/tags" routerLinkActive="active">Tags</a>
+      <a routerLink="/archive" routerLinkActive="active">Archive</a>
+      <a routerLink="/settings" routerLinkActive="active">Settings</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <p class="eyebrow">LOCAL VAULT</p>
+      <strong>245 MB USED</strong>
+    </div>
+  </aside>
+
+  <div class="main-panel">
+    <header class="topbar">
+      <div class="search-wrap">
+        <input
+          type="search"
+          aria-label="Global song search"
+          placeholder="Search songs, albums, lyrics, tags..."
+          [value]="query()"
+          (input)="onGlobalSearch($event)"
+        />
+      </div>
+
+      <div class="topbar-actions">
+        <button class="primary-button" type="button" (click)="openCreateSong()">+ New Song</button>
+      </div>
+    </header>
+
+    <div class="search-results" *ngIf="query().trim()">
+      <span>Matches</span>
+      <div class="result-list">
+        <button *ngFor="let song of filteredSongs(); trackBy: trackBySong" type="button" (click)="navigateToSelectedSong()">
+          {{ song.title }}
+        </button>
+        <button *ngFor="let album of filteredAlbums()" type="button" (click)="navigateToAlbum(album)">
+          Album: {{ album.name }}
+        </button>
+      </div>
+    </div>
+
+    <main class="content-shell">
+      <router-outlet />
+    </main>
+  </div>
+</div>

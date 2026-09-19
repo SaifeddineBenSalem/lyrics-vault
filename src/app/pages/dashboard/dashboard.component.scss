@@ -1,0 +1,127 @@
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.hero-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.6rem;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--accent-soft), rgba(34, 211, 238, 0.09));
+  border: 1px solid var(--border-color);
+}
+
+.hero-card h1 {
+  margin: 0.35rem 0 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.hero-metrics {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.metric {
+  min-width: 100px;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.metric strong {
+  display: block;
+  font-size: 1.8rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+}
+
+.panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+  padding: 1.25rem;
+}
+
+.panel.large {
+  grid-row: span 2;
+}
+
+.panel-header {
+  margin-bottom: 0.9rem;
+}
+
+.song-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.song-row:last-child {
+  border-bottom: 0;
+}
+
+.song-row p {
+  margin: 0.2rem 0 0;
+  opacity: 0.7;
+}
+
+.quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.quick-actions a {
+  display: block;
+  padding: 0.8rem 0.9rem;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.activity-list {
+  padding-left: 1.1rem;
+  margin: 0;
+  display: grid;
+  gap: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.empty-state-card {
+  display: grid;
+  place-items: center;
+  min-height: 240px;
+  text-align: center;
+  padding: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 18px;
+}
+
+.empty-state-card h2 {
+  margin: 0 0 0.5rem;
+}
+
+@media (max-width: 720px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-card {
+    flex-direction: column;
+  }
+}
