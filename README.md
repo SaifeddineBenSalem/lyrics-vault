@@ -453,6 +453,13 @@ If this project is part of a portfolio or creative brand, you can customize this
 
 ---
 
+## Screenshots
+
+![Home Page](screenshots/homepage.png)
+
+
+---
+
 <p align="center">
   <strong>Built for writing, arranging, organizing, and evolving songs.</strong>
 </p>
